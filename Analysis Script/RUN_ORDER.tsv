@@ -1,0 +1,42 @@
+step_id	section	script	environment	depends_on	primary_output
+1	bulk	1_bulk/1_deseq2.R	bio_r	raw counts and metadata	<BULK_GSE287203_ROOT>
+2	bulk	1_bulk/2_enrichment.R	bio_r	1	<BULK_GSE287203_ROOT>/tables
+3	mouse	2_mouse/1_seurat.R	bio_r	group-level matrices	<GSE270931_SCRNA_ROOT>
+4	mouse	2_mouse/2_states.R	bio_r	3	<GSE270931_SCRNA_ROOT>
+5	mouse	2_mouse/3_harmony.R	hdWGCNA	3	<GSE270931_SCRNA_ROOT>/harmony
+6	mouse	2_mouse/4_topology.R	bio_r	locked primary objects	<STATE_STRUCTURE_ROOT>
+7	hdWGCNA	3_hdwgcna/1_subset.R	hdWGCNA	3	<HDWGCNA_ROOT>
+8	hdWGCNA	3_hdwgcna/2_network.R	hdWGCNA	locked manuscript-aligned pre-network input	<HDWGCNA_ROOT>
+9	hdWGCNA	3_hdwgcna/3_post_network.R	hdWGCNA	8	<HDWGCNA_ROOT>
+10	hdWGCNA	3_hdwgcna/4_enrichment.R	hdWGCNA	9	<HDWGCNA_ROOT>
+11	mouse_external	4_mouse_external/1_gse303193_fetch.sh	shell	cached GEO archive	<GSE303193_EXTERNAL_MOUSE_ROOT>
+12	mouse_external	4_mouse_external/2_gse303193_seurat.R	bio_r	10,11	<GSE303193_EXTERNAL_MOUSE_ROOT>
+13	mouse_external	4_mouse_external/3_gse303193_boundary.R	bio_r	12	<GSE303193_EXTERNAL_MOUSE_ROOT>
+14	mouse_external	4_mouse_external/4_pseudobulk.R	bio_r	locked primary object	<GSE303193_PSEUDOBULK_ROOT>
+15	human_targeted	5_human_targeted/1_gse254315_fetch.sh	shell	cached GEO archive	<GSE254315_HUMAN_TARGETED_ROOT>
+16	human_targeted	5_human_targeted/2_metadata.sh	shell	15	<GSE254315_HUMAN_TARGETED_ROOT>
+17	human_targeted	5_human_targeted/3_pseudobulk.R	bio_r	locked primary object	<GSE254315_PSEUDOBULK_ROOT>
+18	human	6_human/1_gse182786_fetch.sh	shell	cached GEO matrices	<GSE182786_HUMAN_AGING_ROOT>
+19	human	6_human/2_gse182786_seurat.R	bio_r	10,18	<GSE182786_HUMAN_AGING_ROOT>
+20	human	6_human/3_gse182786_boundary.R	bio_r	locked primary objects	<GSE182786_BOUNDARY_STRESS_ROOT>
+21	human	6_human/4_bmi.R	bio_r	20	<GSE182786_BOUNDARY_STRESS_ROOT>
+22	human_modules	6_human/module_checks/1_modules.R	bio_r	locked primary objects	<GSE182786_SCHEME3_ROOT>
+23	human_modules	6_human/module_checks/2_loo.R	bio_r	22	<GSE182786_SCHEME3_ROOT>
+24	human_modules	6_human/module_checks/3_core_ext.R	bio_r	22	<GSE182786_SCHEME3_ROOT>
+25	human_modules	6_human/module_checks/4_thresholds.R	bio_r	22	<GSE182786_SCHEME3_ROOT>
+26	human_modules	6_human/module_checks/5_decoupling.R	bio_r	22,24,25	<GSE182786_SCHEME3_ROOT>
+27	robustness	7_robustness/1_downsampling.R	bio_r	locked primary objects	<DONOR_SAMPLE_DOWNSAMPLING_ROOT>
+28	robustness	7_robustness/2_downsampling_summary.py	base_python	27	<DONOR_SAMPLE_DOWNSAMPLING_ROOT>
+29	robustness	7_robustness/3_cluster_boundary.R	bio_r	locked primary objects	<CLUSTER_BOUNDARY_AUDIT_ROOT>
+30	robustness	7_robustness/4_cross_dataset.R	bio_r	29	<CLUSTER_BOUNDARY_AUDIT_ROOT>
+31	state_composition	8_state_composition/1_composition.R	bio_r	locked primary objects	<STATE_STRUCTURE_ROOT>
+32	state_composition	8_state_composition/2_summary.py	base_python	31	<STATE_STRUCTURE_ROOT>
+33	signature	9_signature/1_pseudobulk.R	bio_r	locked primary objects	<PORTABLE_SIGNATURE_PSEUDOBULK_ROOT>
+34	orthologs	10_null/1_orthologs.R	bio_r	cached HomoloGene and locked objects	<ORTHOLOG_CONSERVATION_ROOT>
+35	signature	9_signature/2_orthologs.py	base_python	locked tan module list	<ENSEMBL_ORTHOLOG_ROOT>
+36	signature	9_signature/3_homologene.R	bio_r	33,34	<PORTABLE_SIGNATURE_AUDIT_ROOT>
+37	signature	9_signature/4_ensembl.R	bio_r	33,35	<ENSEMBL_SIGNATURE_AUDIT_ROOT>
+38	null	10_null/2_random_null.R	bio_r	33,34,35	<RANDOM_SIGNATURE_NULL_ROOT>
+39	scfea	11_scfea/1_input.R	bio_r	locked primary object and scFEA repository	<SCFEA_OUTPUT_ROOT>/input
+40	scfea	11_scfea/2_flux.sh	scfea_python	39	<SCFEA_OUTPUT_ROOT>/raw
+41	scfea	11_scfea/3_summary.py	scfea_python	39,40	<SCFEA_OUTPUT_ROOT>/tables
