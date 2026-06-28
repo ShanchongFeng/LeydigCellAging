@@ -40,3 +40,11 @@ step_id	section	script	environment	depends_on	primary_output
 39	scfea	11_scfea/1_input.R	bio_r	locked primary object and scFEA repository	<SCFEA_OUTPUT_ROOT>/input
 40	scfea	11_scfea/2_flux.sh	scfea_python	39	<SCFEA_OUTPUT_ROOT>/raw
 41	scfea	11_scfea/3_summary.py	scfea_python	39,40	<SCFEA_OUTPUT_ROOT>/tables
+42	functional_categories	12_functional_categories/2_curated_gene_effects.R	bio_r	34 and locked curated manifest	<FUNCTIONAL_CATEGORY_ROOT>/tables
+43	functional_categories	12_functional_categories/3_prepare_go_gene_sets.py	base_python	fixed GO annotation files	<FUNCTIONAL_CATEGORY_ROOT>/tables
+44	functional_categories	12_functional_categories/4_go_category_effects.R	bio_r	34,43	<FUNCTIONAL_CATEGORY_ROOT>/tables
+45	functional_categories	12_functional_categories/5_prepare_reactome_gene_sets.py	base_python	fixed Reactome annotation file	<FUNCTIONAL_CATEGORY_ROOT>/tables
+46	functional_categories	12_functional_categories/6_reactome_category_effects.R	bio_r	34,45	<FUNCTIONAL_CATEGORY_ROOT>/tables
+47	functional_categories	12_functional_categories/7_union_leave_one_out.R	bio_r	44,46	<FUNCTIONAL_CATEGORY_ROOT>/tables
+48	gse254315_composition	13_gse254315_composition/1_composition_sensitivity.R	bio_r	42,44 and locked GSE254315 object	<GSE254315_COMPOSITION_ROOT>/tables
+49	gse254315_composition	13_gse254315_composition/2_composition_adjusted_regression.R	bio_r	48	<GSE254315_COMPOSITION_ROOT>/tables

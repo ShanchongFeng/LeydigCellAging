@@ -1,0 +1,5 @@
+file	source_url	sha256	frozen_on
+go-basic.obo	https://current.geneontology.org/ontology/go-basic.obo	923645000afcb1df0e72e252b64950b1c2bcc98c9393fec8c1dd1a0f7c9d4d77	2026-06-19
+goa_human.gaf.gz	https://current.geneontology.org/annotations/goa_human.gaf.gz	db472faff1785878521693af62646546cea6af4a386609dd01c72c0554a46a30	2026-06-19
+mgi.gaf.gz	https://current.geneontology.org/annotations/mgi.gaf.gz	9b7613f786f9f805531a8f6768f310220d28c82095f938e1212c86f39596ce30	2026-06-19
+NCBI2Reactome_All_Levels.txt	https://reactome.org/download/current/NCBI2Reactome_All_Levels.txt	d45f35887aa89969d333c03cf1542ccecd3f252e1600e83b52337989ea165536	2026-06-19

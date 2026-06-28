@@ -1,6 +1,6 @@
 # Leydig Cell Aging
 
-This repository contains analysis scripts for a multi-cohort transcriptomic study of Leydig cell aging. The scripts cover bulk RNA-seq, mouse and human single-cell RNA-seq, hdWGCNA, cross-dataset robustness checks, state-composition analyses, portable signature tests, a size-matched random gene-set null analysis, and a scFEA-based Leydig CMB flux supplement.
+This repository contains analysis scripts for a multi-cohort transcriptomic study of Leydig cell aging. The scripts cover bulk RNA-seq, mouse and human single-cell RNA-seq, hdWGCNA, cross-dataset robustness checks, functional-category analyses, state and cluster-composition sensitivity, portable signature tests, a size-matched random gene-set null analysis, and a scFEA-based Leydig CMB flux supplement.
 
 ## Scope
 
@@ -14,7 +14,7 @@ Input data are not included in this repository.
 
 ## Reproduction Command
 
-`Analysis Script/RUN_ORDER.tsv` records the 41 executable analysis steps, their environments, dependencies, and primary output locations. `Analysis Script/run_all.sh` creates an isolated run tree, links the required inputs read-only, and writes all new outputs and logs beneath:
+`Analysis Script/RUN_ORDER.tsv` records the 49 executable primary analysis steps, their environments, dependencies, and primary output locations. `Analysis Script/run_all.sh` creates an isolated run tree, links the required inputs read-only, and writes all new outputs and logs beneath:
 
 `<SUBMISSION_RUN_ROOT>` or, if unset, `<MANUSCRIPT_INPUT_ROOT>/submission_reproduction_20260605`
 
@@ -53,6 +53,12 @@ Set the site-specific path placeholders before running:
 | `SCFEA_PYTHON_BIN` | Python executable with scFEA dependencies; defaults to `PYTHON_BIN` |
 | `SCFEA_MAX_CELLS_PER_SAMPLE` | Maximum Leydig CMB cells retained per sample before scFEA input export; defaults to `400` |
 | `SCFEA_EPOCHS` | scFEA training epochs; defaults to `100` |
+| `FUNCTIONAL_CATEGORY_ROOT` | Curated, GO, and Reactome category output root |
+| `FUNCTIONAL_CATEGORY_ANNOTATION_ROOT` | Directory containing the four fixed GO/Reactome annotation inputs |
+| `CURATED_GENE_SET_MANIFEST` | Frozen curated gene-set manifest |
+| `ORTHOLOG_GENE_EFFECTS_FILE` | Cross-dataset donor/sample-level gene-effect table |
+| `GSE254315_COMPOSITION_ROOT` | GSE254315 composition-sensitivity output root |
+| `GSE254315_LOCKED_RDS` | Frozen manuscript-aligned GSE254315 Seurat object |
 | `CONDA_EXE` | Conda executable; defaults to `conda` on `PATH` |
 | `PYTHON_BIN` | Python executable for the Python summary scripts; defaults to `python` on `PATH` |
 
@@ -94,6 +100,14 @@ The execution status table is written to `<SUBMISSION_RUN_ROOT>/run_status.tsv`;
 | `Analysis Script/9_signature` | Pseudobulk export, portable signature scoring, and ortholog-based signature checks |
 | `Analysis Script/10_null` | Ortholog universe construction and size-matched random signature null analysis |
 | `Analysis Script/11_scfea` | GSE182786 Leydig CMB scFEA input, flux inference, and sample-level module summary |
+| `Analysis Script/12_functional_categories` | Curated, GO, Reactome, dataset-blocked, and leave-one-gene-out category analyses |
+| `Analysis Script/13_gse254315_composition` | Donor-cluster composition, equal-cluster scores, and composition-adjusted regressions |
+
+The Results-Methods-code map and the 2026-06-28 audit are in `docs/`.
+
+## Known Provenance Limitation
+
+The exact script that created the March 2026 manuscript-aligned GSE254315 clustered object was not recovered after local and server searches. The locked object contains 12 Young donors (age <=44) and 11 Aged donors (age >=52), and the repository reproduces all downstream analyses from that object. A later script using incompatible age cutoffs was excluded. See `docs/INPUTS_AND_PROVENANCE.md`.
 
 ## Data Availability
 
@@ -101,7 +115,7 @@ The public datasets analyzed in this study are available from the NCBI Gene Expr
 
 ## Checksums
 
-`Analysis Script/SHA256SUMS.txt` records SHA-256 hashes for the analysis files using the final file name only. To verify the files after download:
+`Analysis Script/SHA256SUMS.txt` records SHA-256 hashes using paths relative to `Analysis Script/`. To verify the files after download:
 
 ```bash
 cd "Analysis Script"
@@ -113,18 +127,13 @@ expected = {}
 for line in Path("SHA256SUMS.txt").read_text().splitlines():
     if not line.strip():
         continue
-    digest, name = line.split()
+    digest, name = line.split(maxsplit=1)
     expected[name] = digest
 
-files = {
-    p.name: p
-    for p in Path(".").rglob("*")
-    if p.is_file() and p.name != "SHA256SUMS.txt"
-}
 bad = [
     name
     for name, digest in expected.items()
-    if name not in files or hashlib.sha256(files[name].read_bytes()).hexdigest() != digest
+    if not Path(name).is_file() or hashlib.sha256(Path(name).read_bytes()).hexdigest() != digest
 ]
 if bad:
     raise SystemExit("Checksum mismatch: " + ", ".join(bad))

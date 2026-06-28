@@ -45,6 +45,13 @@ export SCFEA_OUTPUT_ROOT="${SCFEA_OUTPUT_ROOT:-$SUBMISSION_WORK_ROOT/SCFEA_LEYDI
 export SCFEA_REPO_ROOT="${SCFEA_REPO_ROOT:-$MANUSCRIPT_INPUT_ROOT/external_tools/scFEA}"
 export SCFEA_MAX_CELLS_PER_SAMPLE="${SCFEA_MAX_CELLS_PER_SAMPLE:-400}"
 export SCFEA_EPOCHS="${SCFEA_EPOCHS:-100}"
+export FUNCTIONAL_CATEGORY_ROOT="${FUNCTIONAL_CATEGORY_ROOT:-$SUBMISSION_WORK_ROOT/FUNCTIONAL_CATEGORIES}"
+export FUNCTIONAL_CATEGORY_ANNOTATION_ROOT="${FUNCTIONAL_CATEGORY_ANNOTATION_ROOT:-$MANUSCRIPT_INPUT_ROOT/functional_category_robustness_20260619/external_annotations}"
+export CURATED_GENE_SET_MANIFEST="${CURATED_GENE_SET_MANIFEST:-$LOCKED_INPUT_ROOT/tables/primary_locked/Hmgcs2_curated_sets/leydig_scRNA_phase2a__phase2b__hmgcs2_curated_sets__csv__00_curated_gene_sets_used.csv}"
+export ORTHOLOG_GENE_EFFECTS_FILE="${ORTHOLOG_GENE_EFFECTS_FILE:-$ORTHOLOG_CONSERVATION_ROOT/ortholog_gene_effects.csv}"
+export ORTHOLOG_ONE_TO_ONE_FILE="${ORTHOLOG_ONE_TO_ONE_FILE:-$ORTHOLOG_CONSERVATION_ROOT/homologene_mouse_human_orthologs_one_to_one.csv}"
+export GSE254315_COMPOSITION_ROOT="${GSE254315_COMPOSITION_ROOT:-$SUBMISSION_WORK_ROOT/GSE254315_COMPOSITION}"
+export GSE254315_LOCKED_RDS="${GSE254315_LOCKED_RDS:-$LOCKED_INPUT_ROOT/rds/primary_locked/GSE254315/GSE254315_check__results__03_filtered_clustered_human_seurat.rds}"
 export MPLCONFIGDIR="$RUN_ROOT/matplotlib"
 
 LOCKED_ROOT="$LOCKED_INPUT_ROOT"
@@ -275,6 +282,24 @@ run_step 40 "scFEA flux" \
   bash "$SCRIPT_ROOT/11_scfea/2_flux.sh"
 run_step 41 "scFEA summary" \
   "$SCFEA_PYTHON_BIN" "$SCRIPT_ROOT/11_scfea/3_summary.py"
+
+run_step 42 "Curated category gene-effect summary" \
+  "${BIO_R[@]}" "$SCRIPT_ROOT/12_functional_categories/2_curated_gene_effects.R"
+run_step 43 "GO category gene-set construction" \
+  "$PYTHON_BIN" "$SCRIPT_ROOT/12_functional_categories/3_prepare_go_gene_sets.py"
+run_step 44 "GO category gene-effect summary" \
+  "${BIO_R[@]}" "$SCRIPT_ROOT/12_functional_categories/4_go_category_effects.R"
+run_step 45 "Reactome category gene-set construction" \
+  "$PYTHON_BIN" "$SCRIPT_ROOT/12_functional_categories/5_prepare_reactome_gene_sets.py"
+run_step 46 "Reactome category gene-effect summary" \
+  "${BIO_R[@]}" "$SCRIPT_ROOT/12_functional_categories/6_reactome_category_effects.R"
+run_step 47 "Functional-category leave-one-gene-out" \
+  "${BIO_R[@]}" "$SCRIPT_ROOT/12_functional_categories/7_union_leave_one_out.R"
+
+run_step 48 "GSE254315 composition sensitivity" \
+  "${BIO_R[@]}" "$SCRIPT_ROOT/13_gse254315_composition/1_composition_sensitivity.R"
+run_step 49 "GSE254315 composition-adjusted regression" \
+  "${BIO_R[@]}" "$SCRIPT_ROOT/13_gse254315_composition/2_composition_adjusted_regression.R"
 
 echo "All submission analysis steps passed."
 echo "Run root: $RUN_ROOT"
