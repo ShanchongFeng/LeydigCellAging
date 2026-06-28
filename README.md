@@ -103,11 +103,9 @@ The execution status table is written to `<SUBMISSION_RUN_ROOT>/run_status.tsv`;
 | `Analysis Script/12_functional_categories` | Curated, GO, Reactome, dataset-blocked, and leave-one-gene-out category analyses |
 | `Analysis Script/13_gse254315_composition` | Donor-cluster composition, equal-cluster scores, and composition-adjusted regressions |
 
-The Results-Methods-code map and the 2026-06-28 audit are in `docs/`.
-
 ## Known Provenance Limitation
 
-The exact script that created the March 2026 manuscript-aligned GSE254315 clustered object was not recovered after local and server searches. The locked object contains 12 Young donors (age <=44) and 11 Aged donors (age >=52), and the repository reproduces all downstream analyses from that object. A later script using incompatible age cutoffs was excluded. See `docs/INPUTS_AND_PROVENANCE.md`.
+The exact script that created the March 2026 manuscript-aligned GSE254315 clustered object was not recovered after local and server searches. The locked object contains 12 Young donors (age <=44) and 11 Aged donors (age >=52), and the repository reproduces all downstream analyses from that object. A later script using incompatible age cutoffs was excluded.
 
 ## Data Availability
 
